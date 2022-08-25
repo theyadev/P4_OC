@@ -7,12 +7,13 @@ from dataclasses import dataclass
 
 from input import custom_input
 from menu import print_menu
-
-import time
+from data import read_json, write_json
 
 
 @dataclass
 class Tournament:
+    _list = []
+
     name: str
     location: str
     start_date: str
@@ -21,6 +22,8 @@ class Tournament:
     players: list[Player]
     game_type: GameType
     description: str
+    current_round: int
+    ended: bool
 
     @classmethod
     def new_from_input(self):
@@ -41,16 +44,61 @@ class Tournament:
             players.append(player)
 
         game_type = print_menu([
-            (game_type.name, lambda: game_type) for game_type in GameType
+            (game_type.name, lambda game_type=game_type: game_type) for game_type in GameType
         ], "Choose game type: ")
 
         description = custom_input("Enter description: ")
 
-        return Tournament(name, location, start_date, end_date, turns, players, game_type, description)
+        tournament = Tournament(name, location, start_date, end_date,
+                                turns, players, game_type, description, 0, False)
+
+        self._list.append(tournament)
+
+        self.save()
+
+        return tournament
+
+    @classmethod
+    def load_json(self):
+        self._list = []
+        tournaments_json = read_json('tournaments.json')
+        for tournament in tournaments_json:
+            players = []
+            rounds = []
+
+            for player_id in tournament['players']:
+                players.append(Player.get_by_id(player_id))
+
+            for turn in tournament['turns']:
+                matchs = []
+                for match in turn['matchs']:
+                    players = []
+                    for player_id in match['players']:
+                        players.append(Player.get_by_id(player_id))
+                    matchs.append(Match(players))
+
+                rounds.append(
+                    Round(turn['name'], turn['start_date'], turn['end_date'], matchs))
+
+            self._list.append(Tournament(tournament['name'], tournament['location'], tournament['start_date'], tournament['end_date'], rounds,
+                              players, GameType[tournament['game_type']], tournament['description'], tournament['current_round'], tournament['ended']))
+    
+    def get_player_score(self, player):
+        score = 0
+        for turn in self.turns:
+            for match in turn.matchs:
+                try:
+                    index = match.players.index(player)
+                    if match.winner == index:
+                        score += 1
+                except ValueError:
+                    continue
+                
+        return score
 
     def get_sorted_players(self):
         players = sorted(self.players, key=lambda x: x.rating, reverse=True)
-        players = sorted(players, key=lambda x: x.score, reverse=True)
+        players = sorted(players, key=lambda x: self.get_player_score(x), reverse=True)
 
         return players
 
@@ -89,21 +137,42 @@ class Tournament:
         new_round = Round(len(self.turns) + 1,
                           self.start_date, self.end_date, [])
 
-        for player in players:
-            for player2 in players:
-                if player == player2:
-                    continue
+        while len(players) > 0:
+            player1 = players.pop(0)
+            player2 = players[0]
 
-                if self.already_played_against(player, player2):
-                    continue
-                new_match = Match((player, player2))
-                new_round.matchs.append(new_match)
-                break
+            if self.already_played_against(player1, player2) and len(players) > 1:
+                player2 = players.pop(1)
+            else:
+                player2 = players.pop(0)
 
-        if len(new_round.matchs) == 0:
-            return False
+            new_match = Match((player1, player2))
+            new_round.matchs.append(new_match)
 
         self.turns.append(new_round)
 
+        self.current_round += 1
+
+        self.save()
+
+    def toJSON(self):
+        return {
+            "name": self.name,
+            "location": self.location,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "turns": [turn.toJSON() for turn in self.turns],
+            "players": [player.id for player in self.players],
+            "game_type": self.game_type.name,
+            "description": self.description,
+            "current_round": self.current_round,
+            "ended": self.ended
+        }
+
     def __str__(self) -> str:
         return f"{self.name} - {self.location} - {self.start_date} - {self.end_date}"
+
+    @classmethod
+    def save(self):
+        write_json('tournaments.json', [tournament.toJSON()
+                   for tournament in self._list])
