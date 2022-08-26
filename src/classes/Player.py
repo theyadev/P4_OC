@@ -21,6 +21,7 @@ class Player:
     gender: Gender
     rating: int
     score: int = 0
+    paired: bool = False
 
     @classmethod
     def new_from_input(self):

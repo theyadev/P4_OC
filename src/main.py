@@ -15,8 +15,11 @@ if __name__ == "__main__":
 
     p = Tournament.new_from_input()
 
-    while p.current_round < 3:
+    while p.ended == False:
         p.next_turn()
+
+        if p.ended == True:
+            break
         p.turns[-1].set_scores()
 
     # for turn in p.turns:

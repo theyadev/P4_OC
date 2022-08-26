@@ -23,6 +23,7 @@ class Tournament:
     game_type: GameType
     description: str
     current_round: int
+    max_turns: int
     ended: bool
 
     @classmethod
@@ -31,6 +32,7 @@ class Tournament:
         location = custom_input("Enter location: ")
         start_date = custom_input("Enter start date: ")
         end_date = custom_input("Enter end date: ")
+        max_turns = 4
         turns = []
         players = []
 
@@ -50,7 +52,7 @@ class Tournament:
         description = custom_input("Enter description: ")
 
         tournament = Tournament(name, location, start_date, end_date,
-                                turns, players, game_type, description, 0, False)
+                                turns, players, game_type, description, 0, max_turns, False)
 
         self._list.append(tournament)
 
@@ -81,16 +83,21 @@ class Tournament:
                     Round(turn['name'], turn['start_date'], turn['end_date'], matchs))
 
             self._list.append(Tournament(tournament['name'], tournament['location'], tournament['start_date'], tournament['end_date'], rounds,
-                              players, GameType[tournament['game_type']], tournament['description'], tournament['current_round'], tournament['ended']))
+                              players, GameType[tournament['game_type']], tournament['description'], tournament['current_round'], tournament["max_turns"],tournament['ended']))
     
     def get_player_score(self, player):
         score = 0
         for turn in self.turns:
             for match in turn.matchs:
                 try:
+                    if match.is_draw:
+                        score += 0.5
+                        continue
+
                     index = match.players.index(player)
                     if match.winner == index:
                         score += 1
+                    
                 except ValueError:
                     continue
                 
@@ -119,41 +126,57 @@ class Tournament:
 
         self.turns.append(new_round)
 
+        self.save()
+
     def already_played_against(self, player1, player2):
         for turn in self.turns:
             for match in turn.matchs:
-                players_str = [player.__str__() for player in match.players]
-                if player1.__str__() in players_str and player2.__str__() in players_str:
+                player_ids = [player.id for player in match.players]
+                if player1.id in player_ids and player2.id in player_ids:
                     return True
         return False
 
     def next_turn(self):
+        if self.current_round == self.max_turns:
+            self.ended = True
+            return
+
+        self.current_round += 1
+
         if len(self.turns) == 0:
             self.first_turn()
             return
 
-        players = self.get_sorted_players()
-
         new_round = Round(len(self.turns) + 1,
                           self.start_date, self.end_date, [])
 
-        while len(players) > 0:
-            player1 = players.pop(0)
-            player2 = players[0]
+        players = self.get_sorted_players()
 
-            if self.already_played_against(player1, player2) and len(players) > 1:
-                player2 = players.pop(1)
-            else:
-                player2 = players.pop(0)
+        for p in players:
+            p.paired = False
 
-            new_match = Match((player1, player2))
-            new_round.matchs.append(new_match)
+        i = 0
+        while i < len(players):
+            if not players[i].paired:
+                k = i+1
 
+                while players[k].paired:
+                    k+=1
+                while self.already_played_against(players[i], players[k]):
+                    k+=1
+
+                new_match = Match((players[i], players[k]))
+                new_round.matchs.append(new_match)
+
+                players[i].paired = True
+                players[k].paired = True
+            i+=1
+             
         self.turns.append(new_round)
 
-        self.current_round += 1
-
         self.save()
+
+        return
 
     def toJSON(self):
         return {
@@ -166,6 +189,7 @@ class Tournament:
             "game_type": self.game_type.name,
             "description": self.description,
             "current_round": self.current_round,
+            "max_turns": self.max_turns,
             "ended": self.ended
         }
 
