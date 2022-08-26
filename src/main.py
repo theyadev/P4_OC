@@ -7,20 +7,28 @@ from classes.Gender import Gender
 
 from datetime import datetime
 
+from menu import print_menu
 
-if __name__ == "__main__":
-    # p = Player.new_from_input()
+from time import sleep
+
+def main():
     Player.load_json()
     Tournament.load_json()
 
+    while True:
+        action = print_menu([
+            ("Create new player", lambda: Player.new_from_input()),
+            ("List players", lambda: Player.list()),
+            # ("List tournaments", lambda: Tournament.list()),
+            ("Create new tournament", lambda: Tournament.new_from_input()),
+            # ("Search tournament", lambda: Tournament.from_list()),
+        ])
+
+        sleep(1)
+if __name__ == "__main__":
+    main()
+
     p = Tournament.new_from_input()
-
-    while p.ended == False:
-        p.next_turn()
-
-        if p.ended == True:
-            break
-        p.turns[-1].set_scores()
 
     # for turn in p.turns:
     #     for match in turn.matchs:

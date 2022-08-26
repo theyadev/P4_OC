@@ -1,3 +1,4 @@
+from time import sleep
 from classes.GameType import GameType
 from classes.Match import Match
 from classes.Player import Player
@@ -36,13 +37,22 @@ class Tournament:
         turns = []
         players = []
 
-        for i in range(8):
-            # player = print_menu([
-            #     ("Create new player", lambda: Player.new_from_input()),
-            #     ("Create random player", lambda: Player.random()),
-            #     ("Search player", lambda: None),
-            # ])
-            player = Player.random()
+        while len(players) < 8:
+            player = print_menu([
+                ("Create new player", lambda: Player.new_from_input()),
+                ("Create random player", lambda: Player.random()),
+                ("Search player", lambda: Player.from_list()),
+            ])  
+
+            if player is None:
+                continue
+
+            if player.id in [player.id for player in players]:
+                print("Player already in the tournament")
+                sleep(1)
+                continue
+
+            
             players.append(player)
 
         game_type = print_menu([
@@ -195,6 +205,14 @@ class Tournament:
 
     def __str__(self) -> str:
         return f"{self.name} - {self.location} - {self.start_date} - {self.end_date}"
+
+    def play(self):
+        while self.ended == False:
+            self.next_turn()
+
+            if self.ended == True:
+                break
+            self.turns[-1].set_scores()
 
     @classmethod
     def save(self):
