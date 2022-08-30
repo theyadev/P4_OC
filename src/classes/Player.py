@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 import random
 from time import sleep
 import names
@@ -12,6 +11,8 @@ from menu import print_menu
 from data import read_json, write_json
 
 PER_PAGE = 10
+
+
 @dataclass
 class Player:
     _list = []
@@ -41,7 +42,9 @@ class Player:
         rating = int(rating)
 
         for player in self._list:
-            if player.first_name == first_name and player.last_name == last_name and player.birth_date == birth_date:
+            if (player.first_name == first_name and
+                player.last_name == last_name and
+                    player.birth_date == birth_date):
                 return player
 
         player = Player.new(first_name, last_name, birth_date, gender, rating)
@@ -57,7 +60,7 @@ class Player:
         for player in self._list:
             if search in player.first_name or search in player.last_name:
                 players.append(player)
-            
+
             if search.isdigit():
                 if player.rating == int(search):
                     players.append(player)
@@ -70,14 +73,15 @@ class Player:
             return None
 
         player = print_menu([
-            (player.__str__(), lambda player=player: player) for player in players
+            (player.__str__(), lambda player=player: player)
+            for player in players
         ])
 
         return player
 
     @classmethod
-    def list(self, page= 0):
-        players = self._list[page * PER_PAGE : (page + 1) * PER_PAGE]
+    def list(self, page=0):
+        players = self._list[page * PER_PAGE: (page + 1) * PER_PAGE]
 
         if len(players) == 0:
             print("No players found")
@@ -87,7 +91,9 @@ class Player:
         menu = []
 
         for player in players:
-            menu.append((player.__str__(), lambda player=player: print(player.__str__())))
+            menu.append(
+                (player.__str__(),
+                 lambda player=player: print(player.__str__())))
 
         menu.append(("Back", lambda: None))
         menu.append(("Next page", lambda: self.list(page + 1)))
@@ -96,7 +102,7 @@ class Player:
         print_menu(menu)
 
         return player
-        
+
     @classmethod
     def get_by_id(self, id):
         for player in self._list:
@@ -145,8 +151,15 @@ class Player:
         self._list = []
         players_json = read_json('players.json')
         for player in players_json:
-            self._list.append(Player(player['id'], player['first_name'], player['last_name'],
-                              player['birth_date'], Gender[player['gender']], player['rating'], player['score']))
+            self._list.append(
+                Player(player['id'],
+                       player['first_name'],
+                       player['last_name'],
+                       player['birth_date'],
+                       Gender[player['gender']],
+                       player['rating'],
+                       player['score']
+                       ))
 
     @classmethod
     def save(self):
