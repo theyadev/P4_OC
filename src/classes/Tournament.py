@@ -1,4 +1,3 @@
-from time import sleep
 from classes.GameType import GameType
 from classes.Match import Match
 from classes.Player import Player
@@ -6,9 +5,11 @@ from classes.Round import Round
 
 from dataclasses import dataclass
 
+from data import read_json, write_json
+
 from input import custom_input
 from menu import print_menu
-from data import read_json, write_json
+from time import sleep
 
 
 @dataclass
@@ -42,7 +43,7 @@ class Tournament:
                 ("Create new player", lambda: Player.new_from_input()),
                 ("Create random player", lambda: Player.random()),
                 ("Search player", lambda: Player.from_list()),
-            ])  
+            ])
 
             if player is None:
                 continue
@@ -52,17 +53,26 @@ class Tournament:
                 sleep(1)
                 continue
 
-            
             players.append(player)
 
         game_type = print_menu([
-            (game_type.name, lambda game_type=game_type: game_type) for game_type in GameType
+            (game_type.name,
+             lambda game_type=game_type: game_type) for game_type in GameType
         ], "Choose game type: ")
 
         description = custom_input("Enter description: ")
 
-        tournament = Tournament(name, location, start_date, end_date,
-                                turns, players, game_type, description, 0, max_turns, False)
+        tournament = Tournament(name,
+                                location,
+                                start_date,
+                                end_date,
+                                turns,
+                                players,
+                                game_type,
+                                description,
+                                0,
+                                max_turns,
+                                False)
 
         self._list.append(tournament)
 
@@ -90,11 +100,24 @@ class Tournament:
                     matchs.append(Match(players))
 
                 rounds.append(
-                    Round(turn['name'], turn['start_date'], turn['end_date'], matchs))
+                    Round(turn['name'],
+                          turn['start_date'],
+                          turn['end_date'],
+                          matchs))
 
-            self._list.append(Tournament(tournament['name'], tournament['location'], tournament['start_date'], tournament['end_date'], rounds,
-                              players, GameType[tournament['game_type']], tournament['description'], tournament['current_round'], tournament["max_turns"],tournament['ended']))
-    
+            self._list.append(
+                Tournament(tournament['name'],
+                           tournament['location'],
+                           tournament['start_date'],
+                           tournament['end_date'],
+                           rounds,
+                           players,
+                           GameType[tournament['game_type']],
+                           tournament['description'],
+                           tournament['current_round'],
+                           tournament["max_turns"],
+                           tournament['ended']))
+
     def get_player_score(self, player):
         score = 0
         for turn in self.turns:
@@ -107,15 +130,16 @@ class Tournament:
                     index = match.players.index(player)
                     if match.winner == index:
                         score += 1
-                    
+
                 except ValueError:
                     continue
-                
+
         return score
 
     def get_sorted_players(self):
         players = sorted(self.players, key=lambda x: x.rating, reverse=True)
-        players = sorted(players, key=lambda x: self.get_player_score(x), reverse=True)
+        players = sorted(
+            players, key=lambda x: self.get_player_score(x), reverse=True)
 
         return players
 
@@ -167,21 +191,21 @@ class Tournament:
 
         i = 0
         while i < len(players):
-            if not players[i].paired:
+            if players[i].paired is False:
                 k = i+1
 
                 while players[k].paired:
-                    k+=1
+                    k += 1
                 while self.already_played_against(players[i], players[k]):
-                    k+=1
+                    k += 1
 
                 new_match = Match((players[i], players[k]))
                 new_round.matchs.append(new_match)
 
                 players[i].paired = True
                 players[k].paired = True
-            i+=1
-             
+            i += 1
+
         self.turns.append(new_round)
 
         self.save()
@@ -204,13 +228,13 @@ class Tournament:
         }
 
     def __str__(self) -> str:
-        return f"{self.name} - {self.location} - {self.start_date} - {self.end_date}"
+        return f"{self.name} - {self.location} - {self.start_date}"
 
     def play(self):
-        while self.ended == False:
+        while self.ended is False:
             self.next_turn()
 
-            if self.ended == True:
+            if self.ended is True:
                 break
             self.turns[-1].set_scores()
 

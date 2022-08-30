@@ -25,7 +25,10 @@ class Match:
         self.winner = result
 
     def __str__(self):
-        return f"{self.players[0]} vs {self.players[1]} {'(DRAW)' if self.is_draw else f'(WINNER: {self.players[self.winner]})' if self.winner is not None else ''}"
+        x = ('(DRAW)' if self.is_draw
+             else '' if self.winner is None
+             else f'(WINNER: {self.players[self.winner]})')
+        return f"{self.players[0]} vs {self.players[1]} {x}"
 
     def toJSON(self):
         return {
