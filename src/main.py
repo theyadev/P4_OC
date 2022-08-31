@@ -1,8 +1,5 @@
 from models.Tournament import Tournament
 from models.Player import Player
-
-from menu import print_menu
-
 from time import sleep
 
 from views.index import index_view

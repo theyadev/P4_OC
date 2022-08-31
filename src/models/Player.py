@@ -1,13 +1,10 @@
 import random
-from time import sleep
 import names
 
 from dataclasses import dataclass
 
 from classes.Gender import Gender
 
-from input import custom_input
-from menu import print_menu
 from data import read_json, write_json
 
 PER_PAGE = 10
