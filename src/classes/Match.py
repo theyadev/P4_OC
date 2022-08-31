@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from classes.Player import Player
+from models.Player import Player
 from menu import print_menu
 
 

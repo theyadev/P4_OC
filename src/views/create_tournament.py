@@ -1,4 +1,3 @@
-from classes.Tournament import Tournament
 from classes.GameType import GameType
 from input import custom_input
 from menu import print_menu
@@ -19,7 +18,4 @@ def create_tournament_view():
 
     description = custom_input("Enter description: ")
 
-    tournament = Tournament(name, location, start_date, end_date,
-                            turns, players, game_type, description, 0, max_turns, False)
-
-    return tournament
+    return (name, location, start_date, end_date, turns, players, game_type, description, 0, max_turns, False)

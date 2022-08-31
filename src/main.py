@@ -1,9 +1,11 @@
-from classes.Tournament import Tournament
-from classes.Player import Player
+from models.Tournament import Tournament
+from models.Player import Player
 
 from menu import print_menu
 
 from time import sleep
+
+from views.index import index_view
 
 
 def main():
@@ -11,14 +13,7 @@ def main():
     Tournament.load_json()
 
     while True:
-        print_menu([
-            ("Create new player", lambda: Player.new_from_input()),
-            ("List players", lambda: Player.list()),
-            # ("List tournaments", lambda: Tournament.list()),
-            ("Create new tournament", lambda: Tournament.new_from_input()),
-            # ("Search tournament", lambda: Tournament.from_list()),
-        ])
-
+        index_view()
         sleep(1)
 
 

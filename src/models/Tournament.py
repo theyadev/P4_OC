@@ -1,6 +1,6 @@
 from classes.GameType import GameType
 from classes.Match import Match
-from classes.Player import Player
+from models.Player import Player
 from classes.Round import Round
 
 from dataclasses import dataclass
