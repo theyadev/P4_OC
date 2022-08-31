@@ -5,7 +5,6 @@ from time import sleep
 from views.index import index_view
 
 
-
 def main():
     Player.load_json()
     Tournament.load_json()

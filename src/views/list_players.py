@@ -42,6 +42,6 @@ def list_players_view(player_list, page=0, per_page=8, sort_by=None):
 
     menu.append(("Back", lambda: None))
 
-    print_menu(menu, "list")
+    print_menu(menu)
 
     return player

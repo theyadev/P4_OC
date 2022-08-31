@@ -25,8 +25,6 @@ class Tournament:
     ended: bool
 
     @classmethod
-=======
->>>>>>> mvc:src/models/Tournament.py
     def load_json(self):
         self._list = []
         tournaments_json = read_json('tournaments.json')
