@@ -1,13 +1,10 @@
 import random
-from time import sleep
 import names
 
 from dataclasses import dataclass
 
 from classes.Gender import Gender
 
-from input import custom_input
-from menu import print_menu
 from data import read_json, write_json
 
 PER_PAGE = 10
@@ -27,81 +24,14 @@ class Player:
     paired: bool = False
 
     @classmethod
-    def new_from_input(self):
-        first_name = custom_input("Enter first name: ")
-        last_name = custom_input("Enter last name: ")
-        birth_date = custom_input("Enter birth date: ")
-
-        gender = print_menu([
-            (gender.name, lambda: gender) for gender in Gender
-        ])
-        rating = ""
-        while not rating.isdigit():
-            rating = custom_input("Enter rating: ")
-
-        rating = int(rating)
-
-        for player in self._list:
+    def get_player_if_exists(cls, first_name, last_name, birth_date):
+        for player in cls._list:
             if (player.first_name == first_name and
-                player.last_name == last_name and
+                    player.last_name == last_name and
                     player.birth_date == birth_date):
                 return player
 
-        player = Player.new(first_name, last_name, birth_date, gender, rating)
-
-        return player
-
-    @classmethod
-    def from_list(self):
-        search = custom_input("Enter search: ")
-
-        players = []
-
-        for player in self._list:
-            if search in player.first_name or search in player.last_name:
-                players.append(player)
-
-            if search.isdigit():
-                if player.rating == int(search):
-                    players.append(player)
-
-        players = players[:PER_PAGE]
-
-        if len(players) == 0:
-            print("No players found")
-            sleep(1)
-            return None
-
-        player = print_menu([
-            (player.__str__(), lambda player=player: player)
-            for player in players
-        ])
-
-        return player
-
-    @classmethod
-    def list(self, page=0):
-        players = self._list[page * PER_PAGE: (page + 1) * PER_PAGE]
-
-        if len(players) == 0:
-            print("No players found")
-            sleep(1)
-            return None
-
-        menu = []
-
-        for player in players:
-            menu.append(
-                (player.__str__(),
-                 lambda player=player: print(player.__str__())))
-
-        menu.append(("Back", lambda: None))
-        menu.append(("Next page", lambda: self.list(page + 1)))
-        menu.append(("Previous page", lambda: self.list(page - 1)))
-
-        print_menu(menu)
-
-        return player
+        return None
 
     @classmethod
     def get_by_id(self, id):

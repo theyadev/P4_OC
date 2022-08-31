@@ -1,15 +1,11 @@
 from classes.GameType import GameType
 from classes.Match import Match
-from classes.Player import Player
+from models.Player import Player
 from classes.Round import Round
 
 from dataclasses import dataclass
 
 from data import read_json, write_json
-
-from input import custom_input
-from menu import print_menu
-from time import sleep
 
 
 @dataclass
@@ -29,58 +25,8 @@ class Tournament:
     ended: bool
 
     @classmethod
-    def new_from_input(self):
-        name = custom_input("Enter name: ")
-        location = custom_input("Enter location: ")
-        start_date = custom_input("Enter start date: ")
-        end_date = custom_input("Enter end date: ")
-        max_turns = 4
-        turns = []
-        players = []
-
-        while len(players) < 8:
-            player = print_menu([
-                ("Create new player", lambda: Player.new_from_input()),
-                ("Create random player", lambda: Player.random()),
-                ("Search player", lambda: Player.from_list()),
-            ])
-
-            if player is None:
-                continue
-
-            if player.id in [player.id for player in players]:
-                print("Player already in the tournament")
-                sleep(1)
-                continue
-
-            players.append(player)
-
-        game_type = print_menu([
-            (game_type.name,
-             lambda game_type=game_type: game_type) for game_type in GameType
-        ], "Choose game type: ")
-
-        description = custom_input("Enter description: ")
-
-        tournament = Tournament(name,
-                                location,
-                                start_date,
-                                end_date,
-                                turns,
-                                players,
-                                game_type,
-                                description,
-                                0,
-                                max_turns,
-                                False)
-
-        self._list.append(tournament)
-
-        self.save()
-
-        return tournament
-
-    @classmethod
+=======
+>>>>>>> mvc:src/models/Tournament.py
     def load_json(self):
         self._list = []
         tournaments_json = read_json('tournaments.json')
