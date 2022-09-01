@@ -4,8 +4,8 @@ import names
 from dataclasses import dataclass
 
 from classes.Gender import Gender
-
-from data import read_json, write_json
+from db import players_db
+from tinydb import Query
 
 PER_PAGE = 10
 
@@ -59,7 +59,7 @@ class Player:
     def new(self, *args):
         player = Player(random.randint(1, 100000000), *args)
         self._list.append(player)
-        self.save()
+        player.save()
         return player
 
     def __str__(self):
@@ -79,7 +79,7 @@ class Player:
     @classmethod
     def load_json(self):
         self._list = []
-        players_json = read_json('players.json')
+        players_json = players_db.all()
         for player in players_json:
             self._list.append(
                 Player(player['id'],
@@ -91,6 +91,6 @@ class Player:
                        player['score']
                        ))
 
-    @classmethod
     def save(self):
-        write_json("players.json", [player.toJSON() for player in self._list])
+        player = Query()
+        players_db.upsert(self.toJSON(), player.id == self.id)

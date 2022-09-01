@@ -5,8 +5,8 @@ from classes.Round import Round
 
 from dataclasses import dataclass
 
-from data import read_json, write_json
-
+from db import tournaments_db
+from tinydb import Query
 
 @dataclass
 class Tournament:
@@ -27,7 +27,7 @@ class Tournament:
     @classmethod
     def load_json(self):
         self._list = []
-        tournaments_json = read_json('tournaments.json')
+        tournaments_json = tournaments_db.all()
         for tournament in tournaments_json:
             players = []
             rounds = []
@@ -182,7 +182,6 @@ class Tournament:
                 break
             self.turns[-1].set_scores()
 
-    @classmethod
     def save(self):
-        write_json('tournaments.json', [tournament.toJSON()
-                   for tournament in self._list])
+        tournament = Query()
+        tournaments_db.upsert(self.toJSON(), tournament.id == self.id)

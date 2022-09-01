@@ -35,6 +35,6 @@ def create_tournament():
 
     Tournament._list.append(tournament)
 
-    Tournament.save()
+    tournament.save()
 
     return tournament

@@ -11,6 +11,4 @@ def create_player():
     if player is None:
         player = Player.new(*player_data)
 
-    Player.save()
-
     return player
