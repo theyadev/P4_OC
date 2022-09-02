@@ -1,7 +1,10 @@
 import os
 from tinydb import TinyDB
 
-if not os.path.exists("./data"):
-    os.mkdir("./data")
-players_db = TinyDB('./data/players.json')
-tournaments_db = TinyDB('./data/tournaments.json')
+PATH = "./data"
+
+if not os.path.exists(PATH):
+    os.mkdir(PATH)
+
+players_db = TinyDB(PATH + '/players.json')
+tournaments_db = TinyDB(PATH + '/tournaments.json')

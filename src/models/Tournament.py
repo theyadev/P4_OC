@@ -38,17 +38,17 @@ class Tournament:
             for turn in tournament['turns']:
                 matchs = []
                 for match in turn['matchs']:
-                    players = []
+                    match_players = []
                     for player_id in match['players']:
-                        players.append(Player.get_by_id(player_id))
-                    matchs.append(Match(players))
+                        match_players.append(Player.get_by_id(player_id))
+                    matchs.append(Match(match_players))
 
                 rounds.append(
                     Round(turn['name'],
                           turn['start_date'],
                           turn['end_date'],
                           matchs))
-
+ 
             self._list.append(
                 Tournament(tournament['name'],
                            tournament['location'],
@@ -79,6 +79,14 @@ class Tournament:
                     continue
 
         return score
+
+    @classmethod
+    def find_by_name(self, name):
+        for tournament in self._list:
+            if tournament.name == name:
+                return tournament
+
+        return None
 
     def get_sorted_players(self):
         players = sorted(self.players, key=lambda x: x.rating, reverse=True)
@@ -139,15 +147,23 @@ class Tournament:
                 k = i+1
 
                 while players[k].paired:
-                    k += 1
-                while self.already_played_against(players[i], players[k]):
+                    print(f"above player {players[k]} already paired")
                     k += 1
 
+                while len(players) < k and self.already_played_against(players[i], players[k]):
+                    print(f"could not pair {players[i]} - {players[k]}")
+                    k += 1
+                    
                 new_match = Match((players[i], players[k]))
                 new_round.matchs.append(new_match)
-
+                print(f"paired {players[i]} - {players[k]}")
+                
                 players[i].paired = True
                 players[k].paired = True
+            else:
+                print(f"{players[i]} already paired")
+            print(", ".join([p.__str__() for p in players if p.paired is False]))
+            input()
             i += 1
 
         self.turns.append(new_round)
@@ -184,4 +200,4 @@ class Tournament:
 
     def save(self):
         tournament = Query()
-        tournaments_db.upsert(self.toJSON(), tournament.id == self.id)
+        tournaments_db.upsert(self.toJSON(), tournament.name == self.name)

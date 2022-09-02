@@ -1,7 +1,7 @@
 from menu import print_menu
 
 
-def list_players_view(player_list, page=0, per_page=8, sort_by=None):
+def list_players_view(player_list, page=0, per_page=8, sort_by=None, title="Players"):
     if sort_by is None:
         sort_by = print_menu([
             ("Sort by rating", lambda: "rating"),
@@ -19,8 +19,7 @@ def list_players_view(player_list, page=0, per_page=8, sort_by=None):
 
     players = player_list[page * per_page: (page + 1) * per_page]
     has_previous = page > 0
-    has_next = page < len(player_list) // per_page
-
+    has_next = page < (len(player_list) // per_page) - 1
     if len(players) == 0:
         input("No players found, press Enter to continue...")
         return None
@@ -42,6 +41,4 @@ def list_players_view(player_list, page=0, per_page=8, sort_by=None):
 
     menu.append(("Back", lambda: None))
 
-    print_menu(menu)
-
-    return player
+    print_menu(menu, title)

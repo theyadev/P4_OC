@@ -37,4 +37,9 @@ def create_tournament():
 
     tournament.save()
 
+    while tournament.max_turns > tournament.current_round:
+        tournament.next_turn()
+        tournament.turns[-1].set_scores()
+        tournament.save()
+
     return tournament
