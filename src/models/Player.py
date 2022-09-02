@@ -63,7 +63,7 @@ class Player:
         return player
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.rating})"
+        return f"{self.first_name} {self.last_name} ({self.rating}) {self.score if self.score > 0 else ''}"
 
     def toJSON(self):
         return {

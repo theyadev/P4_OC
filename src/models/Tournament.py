@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from db import tournaments_db
 from tinydb import Query
 
+
 @dataclass
 class Tournament:
     _list = []
@@ -41,14 +42,15 @@ class Tournament:
                     match_players = []
                     for player_id in match['players']:
                         match_players.append(Player.get_by_id(player_id))
-                    matchs.append(Match(match_players))
+
+                    matchs.append(Match(match_players, is_draw=match['is_draw'], winner=match['winner']))
 
                 rounds.append(
                     Round(turn['name'],
                           turn['start_date'],
                           turn['end_date'],
                           matchs))
- 
+
             self._list.append(
                 Tournament(tournament['name'],
                            tournament['location'],
@@ -141,36 +143,41 @@ class Tournament:
         for p in players:
             p.paired = False
 
-        i = 0
-        while i < len(players):
-            if players[i].paired is False:
-                k = i+1
+        i = 1
+        while len(players) > 0:
+            try:
+                player_1, player_2 = players[0], players[i]
 
-                while players[k].paired:
-                    print(f"above player {players[k]} already paired")
-                    k += 1
+                if self.already_played_against(player_1, player_2):
+                    i += 1
+                else:
+                    new_match = Match((player_1, player_2))
+                    new_round.matchs.append(new_match)
 
-                while len(players) < k and self.already_played_against(players[i], players[k]):
-                    print(f"could not pair {players[i]} - {players[k]}")
-                    k += 1
-                    
-                new_match = Match((players[i], players[k]))
+                    del players[i]
+                    del players[0]
+
+                    i = 1
+            except IndexError:
+                i = 1
+
+                new_match = Match((player_1, player_2))
                 new_round.matchs.append(new_match)
-                print(f"paired {players[i]} - {players[k]}")
-                
-                players[i].paired = True
-                players[k].paired = True
-            else:
-                print(f"{players[i]} already paired")
-            print(", ".join([p.__str__() for p in players if p.paired is False]))
-            input()
-            i += 1
+
+                del players[i]
+                del players[0]
 
         self.turns.append(new_round)
 
         self.save()
 
         return
+
+    def print_players(self):
+        sorted_players = self.get_sorted_players()
+        for player in sorted_players:
+            score = self.get_player_score(player)
+            print(f"{player.__str__()} : {score}")
 
     def toJSON(self):
         return {

@@ -11,7 +11,6 @@ def main():
 
     while True:
         index_view()
-        sleep(1)
 
 
 if __name__ == "__main__":
@@ -22,8 +21,3 @@ if __name__ == "__main__":
     # for turn in p.turns:
     #     for match in turn.matchs:
     #         print(match)
-
-    sorted_players = p.get_sorted_players()
-    for player in sorted_players:
-        score = p.get_player_score(player)
-        print(f"{player.__str__()} : {score}")

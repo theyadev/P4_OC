@@ -6,4 +6,13 @@ def tournament_actions(tournament_name: str):
     if tournament is None:
         print("Tournament not found")
         return
-    tournament_actions_view(tournament)
+    ret = None
+
+    for player in tournament.players:
+        player.score = tournament.get_player_score(player)
+
+    while ret is not False:
+        ret = tournament_actions_view(tournament)
+
+    for player in tournament.players:
+        player.score = 0
