@@ -1,3 +1,5 @@
+"""Controller to render the create a tournament view."""
+
 from models.Tournament import Tournament
 from models.Player import Player
 
@@ -9,6 +11,7 @@ from time import sleep
 
 
 def create_tournament():
+    """Create a tournament."""
     tournament_data = create_tournament_view()
 
     tournament = Tournament(*tournament_data)

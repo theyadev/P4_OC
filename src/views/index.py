@@ -1,3 +1,5 @@
+"""View to show the main view."""
+
 from controllers.list_tournaments import list_tournaments
 from controllers.list_players import list_players
 from controllers.create_tournament import create_tournament
@@ -6,6 +8,7 @@ from menu import print_menu
 
 
 def index_view():
+    """Show the main actions."""
     print_menu([
         ("Create new player", lambda: create_player()),
         ("List players", lambda: list_players()),

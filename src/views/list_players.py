@@ -1,7 +1,10 @@
+"""View to list players."""
+
 from menu import print_menu
 
 
 def list_players_view(player_list, page=0, per_page=8, sort_by=None, title="Players"):
+    """List players."""
     if sort_by is None:
         sort_by = print_menu([
             ("Sort by rating", lambda: "rating"),

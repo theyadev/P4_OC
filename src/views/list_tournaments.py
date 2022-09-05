@@ -1,8 +1,11 @@
+"""View to list tournaments."""
+
 from menu import print_menu
 from controllers.tournament_actions import tournament_actions
 
 
 def list_tournaments_view(tournament_list, page=0, per_page=8, sort_by=None):
+    """List tournaments."""
     if sort_by is None:
         sort_by = print_menu([
             ("Sort by name", lambda: "name"),

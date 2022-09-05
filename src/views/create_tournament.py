@@ -1,9 +1,12 @@
+"""View to create a tournament."""
+
 from classes.GameType import GameType
 from input import custom_input
 from menu import print_menu
 
 
 def create_tournament_view():
+    """Create a tournament."""
     name = custom_input("Enter name: ")
     location = custom_input("Enter location: ")
     start_date = custom_input("Enter start date: ")

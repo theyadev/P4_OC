@@ -1,8 +1,11 @@
+"""View to list rounds."""
+
 from menu import print_menu
 from controllers.list_matches import list_matches
 
 
 def list_rounds_view(turns):
+    """List rounds."""
     menu = [
         (f"Turn {turn.name}", lambda turn=turn: list_matches(turn)) for turn in turns
     ]

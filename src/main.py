@@ -1,3 +1,5 @@
+"""Main entry point."""
+
 from models.Tournament import Tournament
 from models.Player import Player
 
@@ -5,6 +7,7 @@ from views.index import index_view
 
 
 def main():
+    """Python main entry point."""
     Player.load_json()
     Tournament.load_json()
 

@@ -1,3 +1,5 @@
+"""Custom menu."""
+
 import os
 import sys
 import termios
@@ -11,12 +13,12 @@ position_suffix = "H"
 
 
 def printAt(x, y, text):
+    """Print text at position x, y."""
     print(f"{format_prefix}{y};{x}{position_suffix}{text}")
 
 
 def getch_unix(char_width=1):
-    '''get a fixed number of typed characters from the terminal.
-    Linux / Mac only'''
+    """Get a fixed number of typed characters from the terminal. Linux / Mac only."""
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -28,6 +30,7 @@ def getch_unix(char_width=1):
 
 
 def getch_():
+    """Get a single character from the terminal."""
     if system().lower().startswith('win'):
         from msvcrt import getch
         return getch()
@@ -36,10 +39,7 @@ def getch_():
 
 
 def clear_screen():
-    """
-    Clears the terminal screen.
-    """
-
+    """Try to clear the terminal screen."""
     # Clear screen command as function of OS
     command = 'cls' if system().lower().startswith('win') else 'clear'
 
@@ -48,6 +48,7 @@ def clear_screen():
 
 
 def print_menu(menu: list[tuple[str,  callable]], title: str = ""):
+    """Print a menu and return the selected item."""
     pointer = "\033[5m←\033[0m"
     pointer_pos = 1
     y_offset = 0

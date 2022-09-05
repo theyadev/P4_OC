@@ -1,8 +1,11 @@
+"""View to choose a player from a list of players."""
+
 from menu import print_menu
 from input import custom_input
 
 
 def choose_player_from_list_view(player_list, per_page=10):
+    """Choose a player from a list of players."""
     search = custom_input("Enter search: ")
 
     players = []

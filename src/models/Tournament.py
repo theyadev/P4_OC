@@ -1,3 +1,5 @@
+"""Tournament class."""
+
 from classes.GameType import GameType
 from classes.Match import Match
 from models.Player import Player
@@ -11,6 +13,8 @@ from tinydb import Query
 
 @dataclass
 class Tournament:
+    """Tournament class."""
+
     _list = []
 
     name: str
@@ -27,6 +31,7 @@ class Tournament:
 
     @classmethod
     def load_json(self):
+        """Load tournaments from db."""
         self._list = []
         tournaments_json = tournaments_db.all()
         for tournament in tournaments_json:
@@ -64,7 +69,17 @@ class Tournament:
                            tournament["max_turns"],
                            tournament['ended']))
 
+    @classmethod
+    def find_by_name(self, name):
+        """Find tournament by name."""
+        for tournament in self._list:
+            if tournament.name == name:
+                return tournament
+
+        return None
+
     def get_player_score(self, player):
+        """Get player score."""
         score = 0
         for turn in self.turns:
             for match in turn.matchs:
@@ -82,15 +97,8 @@ class Tournament:
 
         return score
 
-    @classmethod
-    def find_by_name(self, name):
-        for tournament in self._list:
-            if tournament.name == name:
-                return tournament
-
-        return None
-
     def get_sorted_players(self):
+        """Get sorted players by rating/score."""
         players = sorted(self.players, key=lambda x: x.rating, reverse=True)
         players = sorted(
             players, key=lambda x: self.get_player_score(x), reverse=True)
@@ -98,6 +106,7 @@ class Tournament:
         return players
 
     def first_turn(self):
+        """Group the players for the first round."""
         players = self.get_sorted_players()
 
         first_group = players[:len(players) // 2]
@@ -117,6 +126,7 @@ class Tournament:
         self.save()
 
     def already_played_against(self, player1, player2):
+        """Check if players already played against each other."""
         for turn in self.turns:
             for match in turn.matchs:
                 player_ids = [player.id for player in match.players]
@@ -125,6 +135,7 @@ class Tournament:
         return False
 
     def next_turn(self):
+        """Group player for the next round."""
         if self.current_round == self.max_turns:
             self.ended = True
             return
@@ -174,12 +185,14 @@ class Tournament:
         return
 
     def print_players(self):
+        """Print players."""
         sorted_players = self.get_sorted_players()
         for player in sorted_players:
             score = self.get_player_score(player)
             print(f"{player.__str__()} : {score}")
 
     def toJSON(self):
+        """Convert tournament to JSON."""
         return {
             "name": self.name,
             "location": self.location,
@@ -194,10 +207,8 @@ class Tournament:
             "ended": self.ended
         }
 
-    def __str__(self) -> str:
-        return f"{self.name} - {self.location} - {self.start_date}"
-
     def play(self):
+        """Play tournament."""
         while self.ended is False:
             self.next_turn()
 
@@ -206,5 +217,10 @@ class Tournament:
             self.turns[-1].set_scores()
 
     def save(self):
+        """Save tournament to db."""
         tournament = Query()
         tournaments_db.upsert(self.toJSON(), tournament.name == self.name)
+
+    def __str__(self) -> str:
+        """Return a string representation of the tournament."""
+        return f"{self.name} - {self.location} - {self.start_date}"

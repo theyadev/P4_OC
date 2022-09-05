@@ -1,3 +1,5 @@
+"""Player class."""
+
 import random
 import names
 
@@ -12,6 +14,8 @@ PER_PAGE = 10
 
 @dataclass
 class Player:
+    """Player class."""
+
     _list = []
 
     id: int
@@ -24,7 +28,24 @@ class Player:
     paired: bool = False
 
     @classmethod
+    def load_json(self):
+        """Load players from db."""
+        self._list = []
+        players_json = players_db.all()
+        for player in players_json:
+            self._list.append(
+                Player(player['id'],
+                       player['first_name'],
+                       player['last_name'],
+                       player['birth_date'],
+                       Gender[player['gender']],
+                       player['rating'],
+                       player['score']
+                       ))
+
+    @classmethod
     def get_player_if_exists(cls, first_name, last_name, birth_date):
+        """Return a player if exists."""
         for player in cls._list:
             if (player.first_name == first_name and
                     player.last_name == last_name and
@@ -35,6 +56,7 @@ class Player:
 
     @classmethod
     def get_by_id(self, id):
+        """Return a player by id."""
         for player in self._list:
             if player.id == id:
                 return player
@@ -42,6 +64,7 @@ class Player:
 
     @classmethod
     def random(self):
+        """Return a random player."""
         first_name = names.get_first_name()
         last_name = names.get_last_name()
 
@@ -57,15 +80,14 @@ class Player:
 
     @classmethod
     def new(self, *args):
+        """Create a new player."""
         player = Player(random.randint(1, 100000000), *args)
         self._list.append(player)
         player.save()
         return player
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.rating}) {self.score if self.score > 0 else ''}"
-
     def toJSON(self):
+        """Return a JSON representation of the player."""
         return {
             "id": self.id,
             "first_name": self.first_name,
@@ -76,21 +98,11 @@ class Player:
             "score": self.score,
         }
 
-    @classmethod
-    def load_json(self):
-        self._list = []
-        players_json = players_db.all()
-        for player in players_json:
-            self._list.append(
-                Player(player['id'],
-                       player['first_name'],
-                       player['last_name'],
-                       player['birth_date'],
-                       Gender[player['gender']],
-                       player['rating'],
-                       player['score']
-                       ))
-
     def save(self):
+        """Save the player in db."""
         player = Query()
         players_db.upsert(self.toJSON(), player.id == self.id)
+
+    def __str__(self):
+        """Return a string representation of the player."""
+        return f"{self.first_name} {self.last_name} ({self.rating}) {self.score if self.score > 0 else ''}"

@@ -1,8 +1,11 @@
+"""Controller to render the create a player view."""
+
 from views.create_player import create_player_view
 from models.Player import Player
 
 
 def create_player():
+    """Create a player."""
     player_data = create_player_view()
 
     player = Player.get_player_if_exists(
