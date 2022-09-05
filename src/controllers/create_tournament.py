@@ -3,6 +3,7 @@ from models.Player import Player
 
 from views.choose_player import choose_player_view
 from views.create_tournament import create_tournament_view
+from views.list_players import list_players_view
 
 from time import sleep
 
@@ -41,5 +42,8 @@ def create_tournament():
         tournament.next_turn()
         tournament.turns[-1].set_scores()
         tournament.save()
+
+    list_players_view(tournament.get_sorted_players(),
+                      sort_by="nothing", title="Leaderboard ---------")
 
     return tournament
