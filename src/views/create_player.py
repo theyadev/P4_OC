@@ -1,8 +1,8 @@
 """View to create a player."""
 
-from classes.Gender import Gender
-from input import custom_input
-from menu import print_menu
+from models.Gender import Gender
+from utils.input import custom_input
+from utils.menu import print_menu
 
 
 def create_player_view():

@@ -1,6 +1,6 @@
 """View to list tournaments."""
 
-from menu import print_menu
+from utils.menu import print_menu
 from controllers.tournament_actions import tournament_actions
 
 

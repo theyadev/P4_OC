@@ -1,6 +1,6 @@
 """View to select tournament actions."""
 
-from menu import print_menu
+from utils.menu import print_menu
 from views.list_players import list_players_view
 from controllers.play_next_turn import play_next_turn
 from controllers.play_all_turns import play_all_turns

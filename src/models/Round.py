@@ -1,10 +1,10 @@
 """Class for a round."""
 
-from classes.Match import Match
+from models.Match import Match
 
 from dataclasses import dataclass
 
-from menu import print_menu
+from utils.menu import print_menu
 
 
 @dataclass

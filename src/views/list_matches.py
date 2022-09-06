@@ -1,6 +1,6 @@
 """View to list matches."""
 
-from menu import print_menu
+from utils.menu import print_menu
 
 
 def list_matches_view(matchs):

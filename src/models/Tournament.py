@@ -1,13 +1,13 @@
 """Tournament class."""
 
-from classes.GameType import GameType
-from classes.Match import Match
+from models.GameType import GameType
+from models.Match import Match
 from models.Player import Player
-from classes.Round import Round
+from models.Round import Round
 
 from dataclasses import dataclass
 
-from db import tournaments_db
+from utils.db import tournaments_db
 from tinydb import Query
 
 

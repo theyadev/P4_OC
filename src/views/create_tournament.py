@@ -1,8 +1,8 @@
 """View to create a tournament."""
 
-from classes.GameType import GameType
-from input import custom_input
-from menu import print_menu
+from models.GameType import GameType
+from utils.input import custom_input
+from utils.menu import print_menu
 
 
 def create_tournament_view():

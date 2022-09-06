@@ -1,6 +1,6 @@
 """View to create or choose a player."""
 
-from menu import print_menu
+from utils.menu import print_menu
 
 from controllers.create_player import create_player
 from views.choose_player_from_list import choose_player_from_list_view

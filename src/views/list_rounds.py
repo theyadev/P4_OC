@@ -1,6 +1,6 @@
 """View to list rounds."""
 
-from menu import print_menu
+from utils.menu import print_menu
 from controllers.list_matches import list_matches
 
 

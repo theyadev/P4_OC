@@ -4,7 +4,7 @@ from controllers.list_tournaments import list_tournaments
 from controllers.list_players import list_players
 from controllers.create_tournament import create_tournament
 from controllers.create_player import create_player
-from menu import print_menu
+from utils.menu import print_menu
 
 
 def index_view():

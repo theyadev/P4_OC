@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from models.Player import Player
-from menu import print_menu
+from utils.menu import print_menu
 
 
 @dataclass

@@ -5,8 +5,8 @@ import names
 
 from dataclasses import dataclass
 
-from classes.Gender import Gender
-from db import players_db
+from models.Gender import Gender
+from utils.db import players_db
 from tinydb import Query
 
 PER_PAGE = 10

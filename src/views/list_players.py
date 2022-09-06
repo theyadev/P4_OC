@@ -1,6 +1,6 @@
 """View to list players."""
 
-from menu import print_menu
+from utils.menu import print_menu
 
 
 def list_players_view(player_list, page=0, per_page=8, sort_by=None, title="Players"):
